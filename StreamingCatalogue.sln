@@ -1,8 +1,11 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingCatalogue", "StreamingCatalogue.csproj", "{313441D7-DFE8-6DE2-FEEC-8C739C795116}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingCatalogue.UnitTests", "StreamingCatalogue.UnitTests\StreamingCatalogue.UnitTests.csproj", "{3E247C5C-5542-4F91-BF53-1FADC10E98F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StreamingCatalogue", "StreamingCatalogue\StreamingCatalogue.csproj", "{8236DF5C-70DA-4ED4-BB88-0F5990312186}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,10 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{313441D7-DFE8-6DE2-FEEC-8C739C795116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{313441D7-DFE8-6DE2-FEEC-8C739C795116}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{313441D7-DFE8-6DE2-FEEC-8C739C795116}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{313441D7-DFE8-6DE2-FEEC-8C739C795116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E247C5C-5542-4F91-BF53-1FADC10E98F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E247C5C-5542-4F91-BF53-1FADC10E98F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E247C5C-5542-4F91-BF53-1FADC10E98F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E247C5C-5542-4F91-BF53-1FADC10E98F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8236DF5C-70DA-4ED4-BB88-0F5990312186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8236DF5C-70DA-4ED4-BB88-0F5990312186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8236DF5C-70DA-4ED4-BB88-0F5990312186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8236DF5C-70DA-4ED4-BB88-0F5990312186}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
