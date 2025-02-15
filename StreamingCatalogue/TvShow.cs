@@ -1,21 +1,12 @@
 namespace StreamingCatalogue
 {
-    public interface IFilm
+    public class TvShow : MediaContent
     {
-        string Name { set; get; }
-        DateOnly ReleaseDate { set; get; }
-        string Genre { set; get; }
-        int Rating { set; get; }
-        int Runtime { set; get; }
-    }
-    public class Film : MediaContent, IFilm
-    {
-
         public string Name { set; get; }
         public DateOnly ReleaseDate { set; get; }
         public string Genre { set; get; }
         private int _rating;
-        public int Rating
+        public virtual int Rating
         {
             get
             {
@@ -33,18 +24,20 @@ namespace StreamingCatalogue
                 }
             }
         }
-        public int Runtime { set; get; }
+        int SeasonNumber { set; get; }
+        int NumberOfEpisodes { set; get; }
         public override string GetUniqueId()
         {
-            return $"{Name}-S{ReleaseDate.Year}";
+            return $"{Name}-S{SeasonNumber}";
         }
-        public Film(string name, DateOnly releaseDate, string genre = "", int runtime = 0, int rating = 0)
+        public TvShow(string name, DateOnly releaseDate, int seasonNumber, string genre = "", int numberOfEpisodes = 0, int rating = 0)
         {
             Name = name;
-            ReleaseDate = releaseDate;
             Genre = genre;
-            Runtime = runtime;
-            Rating = rating;
+            ReleaseDate = releaseDate;
+            NumberOfEpisodes = numberOfEpisodes;
+            _rating = rating;
+            SeasonNumber = seasonNumber;
         }
     }
 }
