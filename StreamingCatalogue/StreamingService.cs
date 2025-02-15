@@ -6,7 +6,7 @@ namespace StreamingCatalogue
     public interface IStreamingService
     {
         string Name { set; get; }
-        int Price { set; get; }
+        decimal Price { set; get; }
         ReadOnlyCollection<IFilm> GetAllFilms();
         IFilm? GetFilm(string name, int yearOfRelease);
         bool AddFilm(IFilm film);
@@ -16,11 +16,11 @@ namespace StreamingCatalogue
     public class StreamingService : IStreamingService
     {
         public string Name { set; get; }
-        public int Price { set; get; }
+        public decimal Price { set; get; }
         //While having the Title and Year Of Release in both the key of dictionary and the Film object is redundant
         //it makes lookup in the dictionary faster and more readable than a list, it is needed in the Film object as otherwise it would complicate the handlig of the films
         private List<IFilm> Films { get; set; }
-        public StreamingService(string name, int price, List<IFilm>? films = null)
+        public StreamingService(string name, decimal price, List<IFilm>? films = null)
         {
             Name = name;
             Price = price;
