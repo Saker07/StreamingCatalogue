@@ -5,12 +5,12 @@ namespace StreamingCatalogue
 {
     public interface IStreamingRegister
     {
-        ReadOnlyCollection<(string StreamingServiceName, IFilm Film)> GetEntireRegister();
-        ReadOnlyCollection<(string StreamingServiceName, IFilm Film)> GetAllFilmsInStreamingService(string serviceName);
-        (string StreamingServiceName, IFilm Film)? GetFilmAndService(string title, int releaseYear);
-        bool SetRating(string filmName, int yearOfRelease, int rating);
-        bool AddFilm(IFilm film, string streamingServiceName);
-        bool RemoveFilm(string name, int releaseYear);
+        ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)> GetEntireRegister();
+        ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)> GetAllContentsInStreamingService(string serviceName);
+        (string StreamingServiceName, IMediaContent Content)? GetContentAndService(string title, int releaseYear, char contentType);
+        bool SetRating(string name, int yearOfRelease, char contentType, int rating);
+        bool AddContent(IMediaContent content, string streamingServiceName);
+        bool RemoveContent(string name, int releaseYear, char contentType);
         bool AddStreamingService(IStreamingService streamingService);
         bool RemoveStreamingService(string serviceName);
         IStreamingService? GetStreamingService(string serviceName);
@@ -25,60 +25,60 @@ namespace StreamingCatalogue
             StreamingServices = streamingServices != null ? streamingServices : new List<IStreamingService>();
         }
 
-        public ReadOnlyCollection<(string StreamingServiceName, IFilm Film)> GetEntireRegister()
+        public ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)> GetEntireRegister()
         {
-            List<(string StreamingServiceName, IFilm Film)> returnList = new List<(string StreamingServiceName, IFilm Film)>();
+            List<(string StreamingServiceName, IMediaContent Content)> returnList = new List<(string StreamingServiceName, IMediaContent Content)>();
             foreach (var service in StreamingServices)
             {
-                List<IFilm> serviceFilms = new List<IFilm>(service.GetAllFilms());
-                serviceFilms.Sort();
-                foreach (var film in serviceFilms)
+                List<IMediaContent> contentList = new List<IMediaContent>(service.GetAllContents());
+                contentList.Sort();
+                foreach (var content in contentList)
                 {
-                    returnList.Add((service.Name, film));
+                    returnList.Add((service.Name, content));
                 }
             }
-            return new ReadOnlyCollection<(string StreamingServiceName, IFilm Film)>(returnList);
+            return new ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)>(returnList);
         }
 
-        public ReadOnlyCollection<(string StreamingServiceName, IFilm Film)>? GetAllFilmsInStreamingService(string streamingServiceName)
+        public ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)>? GetAllContentsInStreamingService(string streamingServiceName)
         {
             IStreamingService? service = StreamingServices.Where(service => service.Name == streamingServiceName).FirstOrDefault();
-            List<(string StreamingServiceName, IFilm Film)> returnList = new List<(string StreamingServiceName, IFilm Film)>();
+            List<(string StreamingServiceName, IMediaContent Content)> returnList = new List<(string StreamingServiceName, IMediaContent Content)>();
 
             if (service != null)
             {
-                ReadOnlyCollection<IFilm> filmList = service.GetAllFilms();
-                foreach (var film in filmList)
+                ReadOnlyCollection<IMediaContent> contentList = service.GetAllContents();
+                foreach (var content in contentList)
                 {
-                    returnList.Add((service.Name, film));
+                    returnList.Add((service.Name, content));
                 }
-                return new ReadOnlyCollection<(string StreamingServiceName, IFilm Film)>(returnList);
+                return new ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)>(returnList);
             }
             return null;
         }
 
-        public (string StreamingServiceName, IFilm Film)? GetFilmAndService(string title, int releaseYear)
+        public (string StreamingServiceName, IMediaContent Content)? GetContentAndService(string title, int releaseYear, char contentType)
         {
-            (string StreamingServiceName, IFilm Film)? returnTuple = null;
-            IFilm? returnFilm = null;
+            (string StreamingServiceName, IMediaContent Content)? returnTuple = null;
+            IMediaContent? returnContent = null;
             foreach (var service in StreamingServices)
             {
-                returnFilm = service.GetFilm(title, releaseYear);
-                if (returnFilm != null)
+                returnContent = service.GetContent(title, releaseYear, contentType);
+                if (returnContent != null)
                 {
-                    returnTuple = (service.Name, returnFilm);
+                    returnTuple = (service.Name, returnContent);
                     break;
                 }
             }
             return returnTuple;
         }
 
-        public bool SetRating(string filmName, int yearOfRelease, int rating)
+        public bool SetRating(string contentName, int yearOfRelease, char contentType, int rating)
         {
-            GetFilmAndService(filmName, yearOfRelease);
+            GetContentAndService(contentName, yearOfRelease, contentType);
             foreach (var service in StreamingServices)
             {
-                bool isRatingSet = service.SetRating(filmName, yearOfRelease, rating);
+                bool isRatingSet = service.SetRating(contentName, yearOfRelease, contentType, rating);
                 if (isRatingSet)
                 {
                     return true;
@@ -87,32 +87,32 @@ namespace StreamingCatalogue
             return false;
 
         }
-        public bool AddFilm(IFilm film, string streamingServiceName)
+        public bool AddContent(IMediaContent content, string streamingServiceName)
         {
-            ReadOnlyCollection<(string StreamingServiceName, IFilm Film)>? streamingRegister = GetEntireRegister();
-            (string StreamingServiceName, IFilm Film)? serviceFilm = streamingRegister?.Where(serviceFilm => serviceFilm.Film.Name == film.Name && serviceFilm.Film.ReleaseDate.Year == film.ReleaseDate.Year).FirstOrDefault();
-            if (serviceFilm == (null, null))
+            ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)>? streamingRegister = GetEntireRegister();
+            (string StreamingServiceName, IMediaContent Content)? serviceContent = streamingRegister?.Where(serviceContent => serviceContent.Content.Name == content.Name && serviceContent.Content.ReleaseDate.Year == content.ReleaseDate.Year).FirstOrDefault();
+            if (serviceContent == (null, null))
             {
-                bool? isFilmAdded = StreamingServices.Where(service => service.Name == streamingServiceName).FirstOrDefault()?.AddFilm(film);
-                return isFilmAdded != null && isFilmAdded == true ? true : false;
+                bool? isContentAdded = StreamingServices.Where(service => service.Name == streamingServiceName).FirstOrDefault()?.AddContent(content);
+                return isContentAdded != null && isContentAdded == true ? true : false;
             }
             else
             {
                 return false;
             }
         }
-        public bool RemoveFilm(string filmName, int yearOfRelease)
+        public bool RemoveContent(string contentName, int yearOfRelease, char contentType)
         {
-            bool filmRemoved = false;
+            bool contentRemoved = false;
             foreach (var service in StreamingServices)
             {
-                filmRemoved = service.RemoveFilm(filmName, yearOfRelease);
-                if (filmRemoved)
+                contentRemoved = service.RemoveContent(contentName, yearOfRelease, contentType);
+                if (contentRemoved)
                 {
                     break;
                 }
             }
-            return filmRemoved;
+            return contentRemoved;
         }
         public bool AddStreamingService(IStreamingService streamingService)
         {

@@ -20,7 +20,7 @@ namespace StreamingCatalogue.UnitTests
             _streamingRegister = new StreamingRegister();
         }
         [Test]
-        public void SetRating_should_be_invoked_in_all_streamingServices_when_film_not_found()
+        public void SetRating_should_be_invoked_in_all_streamingServices_when_content_not_found()
         {
             // Arrange
             List<Mock<IStreamingService>> mocks = new List<Mock<IStreamingService>>();
@@ -28,14 +28,14 @@ namespace StreamingCatalogue.UnitTests
             for (int i = 0; i < 5; i++)
             {
                 var mock = new Mock<IStreamingService>();
-                mock.Setup(x => x.SetRating(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).Verifiable();
+                mock.Setup(x => x.SetRating(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>(), It.IsAny<int>())).Verifiable();
                 mocks.Add(mock);
                 mockedStreamingServicesList.Add(mock.Object);
             }
             _streamingRegister = new StreamingRegister(mockedStreamingServicesList);
 
             // Act
-            _streamingRegister.SetRating("Hulk", 2003, 2);
+            _streamingRegister.SetRating("Hulk", 2003, 'F', 2);
 
             // Assert
             foreach (var m in mocks)
@@ -44,101 +44,101 @@ namespace StreamingCatalogue.UnitTests
             }
         }
         [Test]
-        public void SetRating_should_return_false_when_film_not_found()
+        public void SetRating_should_return_false_when_content_not_found()
         {
             // Arrange
 
             // Act
-            bool returnedValue = _streamingRegister.SetRating("Hulk", 2003, 2);
+            bool returnedValue = _streamingRegister.SetRating("Hulk", 2003, 'F', 2);
 
             //Assert
             Assert.That(returnedValue, Is.False);
         }
         [Test]
-        public void SetRating_should_return_true_when_film_found()
+        public void SetRating_should_return_true_when_Content_found()
         {
             // Arrange
             var mock = new Mock<IStreamingService>();
-            mock.Setup(x => x.SetRating(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+            mock.Setup(x => x.SetRating(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>(), It.IsAny<int>())).Returns(true);
 
             var mock2 = new Mock<IStreamingService>();
-            mock.Setup(x => x.SetRating(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+            mock.Setup(x => x.SetRating(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>(), It.IsAny<int>())).Returns(true);
 
             var mock3 = new Mock<IStreamingService>();
-            mock.Setup(x => x.SetRating(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>())).Returns(true);
+            mock.Setup(x => x.SetRating(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>(), It.IsAny<int>())).Returns(true);
 
             _streamingRegister = new StreamingRegister([mock.Object]);
 
             // Act
-            bool returnValue = _streamingRegister.SetRating("Hulk", 2003, 3);
+            bool returnValue = _streamingRegister.SetRating("Hulk", 2003, 'F', 3);
 
             // Assert
             Assert.That(returnValue, Is.True);
         }
         [Test]
-        public void GetAllFilmsInStreamingService_should_call_GetAllFilms()
+        public void GetAllContentsInStreamingService_should_call_GetAllContents()
         {
             // Arrange
             var mock = new Mock<IStreamingService>();
-            mock.Setup(x => x.GetAllFilms()).Returns(new ReadOnlyCollection<IFilm>([])).Verifiable();
+            mock.Setup(x => x.GetAllContents()).Returns(new ReadOnlyCollection<IMediaContent>([])).Verifiable();
             mock.Setup(x => x.Name).Returns("Notflix");
             _streamingRegister = new StreamingRegister([mock.Object]);
 
             // Act
-            _streamingRegister.GetAllFilmsInStreamingService("Notflix");
+            _streamingRegister.GetAllContentsInStreamingService("Notflix");
 
             // Assert
             mock.VerifyAll();
         }
         [Test]
-        public void GetFilmAndService_should_call_call_GetFilm_in_all_StreamingServices_until_correct()
+        public void GetContentAndService_should_call_call_GetContent_in_all_StreamingServices_until_correct()
         {
             // Arrange
             var mock1 = new Mock<IStreamingService>();
-            mock1.Setup(x => x.GetFilm(It.IsAny<string>(), It.IsAny<int>())).Returns(value: null).Verifiable();
+            mock1.Setup(x => x.GetContent(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>())).Returns(value: null).Verifiable();
 
             var mock2 = new Mock<IStreamingService>();
-            mock2.Setup(x => x.GetFilm("Hulk", 2003)).Returns(new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138)).Verifiable();
+            mock2.Setup(x => x.GetContent("Hulk", 2003, 'F')).Returns(new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138)).Verifiable();
 
             var mock3 = new Mock<IStreamingService>();
-            mock3.Setup(x => x.GetFilm(It.IsAny<string>(), It.IsAny<int>())).Returns(value: null).Verifiable();
+            mock3.Setup(x => x.GetContent(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>())).Returns(value: null).Verifiable();
 
             _streamingRegister = new StreamingRegister([mock1.Object, mock2.Object, mock3.Object]);
 
             // Act
-            (string StreamingService, IFilm Film)? returnedValue = _streamingRegister.GetFilmAndService("Hulk", 2003);
+            (string StreamingService, IMediaContent Content)? returnedValue = _streamingRegister.GetContentAndService("Hulk", 2003, 'F');
 
             // Assert
             mock1.VerifyAll();
             mock2.VerifyAll();
-            mock3.Verify(x => x.GetFilm(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+            mock3.Verify(x => x.GetContent(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>()), Times.Never);
 
         }
 
 
         [Test]
-        public void RemoveFilm_should_call_RemoveFilm_on_all_StreamingServices_until_found()
+        public void RemoveContent_should_call_RemoveContent_on_all_StreamingServices_until_found()
         {
             // Arrange
             var mock1 = new Mock<IStreamingService>();
-            mock1.Setup(x => x.RemoveFilm(It.IsAny<string>(), It.IsAny<int>())).Returns(false).Verifiable();
+            mock1.Setup(x => x.RemoveContent(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>())).Returns(false).Verifiable();
 
             var mock2 = new Mock<IStreamingService>();
-            mock2.Setup(x => x.RemoveFilm("Hulk", 2003)).Returns(true).Verifiable();
+            mock2.Setup(x => x.RemoveContent("Hulk", 2003, 'F')).Returns(true).Verifiable();
 
             var mock3 = new Mock<IStreamingService>();
-            mock3.Setup(x => x.RemoveFilm(It.IsAny<string>(), It.IsAny<int>())).Returns(false).Verifiable();
+            mock3.Setup(x => x.RemoveContent(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>())).Returns(false).Verifiable();
 
             _streamingRegister = new StreamingRegister([mock1.Object, mock2.Object, mock3.Object]);
 
             // Act
-            bool returnValue = _streamingRegister.RemoveFilm("Hulk", 2003);
+            bool returnValue = _streamingRegister.RemoveContent("Hulk", 2003, 'F');
 
             // Assert
             Assert.That(returnValue, Is.True);
             mock1.VerifyAll();
             mock2.VerifyAll();
-            mock3.Verify(x => x.RemoveFilm(It.IsAny<string>(), It.IsAny<int>()), Times.Never());
+            mock3.Verify(x => x.RemoveContent(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>()), Times.Never());
         }
 
         [Test]
@@ -287,76 +287,75 @@ namespace StreamingCatalogue.UnitTests
             Assert.That(wasServiceAdded, Is.False);
         }
         [Test]
-        public void AddFilm_should_return_false_when_found()
+        public void AddContent_should_return_false_when_found()
         {
             // Arrange
-            IFilm newFilm = new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138);
+            IMediaContent newContent = new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138);
 
             var mock1 = new Mock<IStreamingService>();
             mock1.Setup(x => x.Name).Returns("Notflix");
             mock1.Setup(x => x.Price).Returns(12.99M);
-            mock1.Setup(x => x.GetAllFilms()).Returns(new ReadOnlyCollection<IFilm>(new List<IFilm>()));
+            mock1.Setup(x => x.GetAllContents()).Returns(new ReadOnlyCollection<IMediaContent>(new List<IMediaContent>()));
 
             var mock2 = new Mock<IStreamingService>();
             mock2.Setup(x => x.Name).Returns("Dasny");
             mock2.Setup(x => x.Price).Returns(10.99M);
-            mock2.Setup(x => x.GetAllFilms()).Returns(new ReadOnlyCollection<IFilm>(new List<IFilm>([newFilm])));
-            mock2.Setup(x => x.GetFilm(It.IsAny<string>(), It.IsAny<int>())).Returns(newFilm);
+            mock2.Setup(x => x.GetAllContents()).Returns(new ReadOnlyCollection<IMediaContent>(new List<IMediaContent>([newContent])));
+            mock2.Setup(x => x.GetContent(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<char>())).Returns(newContent);
 
             var mock3 = new Mock<IStreamingService>();
             mock3.Setup(x => x.Name).Returns("AmazingPrimed");
             mock3.Setup(x => x.Price).Returns(14.99M);
-            mock3.Setup(x => x.GetAllFilms()).Returns(new ReadOnlyCollection<IFilm>(new List<IFilm>()));
+            mock3.Setup(x => x.GetAllContents()).Returns(new ReadOnlyCollection<IMediaContent>(new List<IMediaContent>()));
 
             List<IStreamingService> mockedServices = new List<IStreamingService>([mock1.Object, mock2.Object, mock3.Object]);
 
             _streamingRegister = new StreamingRegister(mockedServices);
 
             // Act
-            bool wasFilmAdded = _streamingRegister.AddFilm(newFilm, "AmazingPrimed");
+            bool wasContentAdded = _streamingRegister.AddContent(newContent, "AmazingPrimed");
 
             // Assert
-            Assert.That(wasFilmAdded, Is.False);
+            Assert.That(wasContentAdded, Is.False);
         }
         [Test]
-        public void AddFilm_should_add_film_when_not_found()
+        public void AddContent_should_add_content_when_not_found()
         {
             // Arrange
-            IFilm newFilm = new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138);
+            IMediaContent newContent = new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138);
 
             var mock1 = new Mock<IStreamingService>();
             mock1.Setup(x => x.Name).Returns("Notflix");
             mock1.Setup(x => x.Price).Returns(12.99M);
-            mock1.Setup(x => x.GetAllFilms()).Returns(new ReadOnlyCollection<IFilm>(new List<IFilm>()));
+            mock1.Setup(x => x.GetAllContents()).Returns(new ReadOnlyCollection<IMediaContent>(new List<IMediaContent>()));
 
             var mock2 = new Mock<IStreamingService>();
             mock2.Setup(x => x.Name).Returns("Dasny");
             mock2.Setup(x => x.Price).Returns(10.99M);
-            mock2.Setup(x => x.GetAllFilms()).Returns(new ReadOnlyCollection<IFilm>(new List<IFilm>()));
+            mock2.Setup(x => x.GetAllContents()).Returns(new ReadOnlyCollection<IMediaContent>(new List<IMediaContent>()));
 
             var mock3 = new Mock<IStreamingService>();
             mock3.Setup(x => x.Name).Returns("AmazingPrimed");
             mock3.Setup(x => x.Price).Returns(14.99M);
-            mock3.Setup(x => x.AddFilm(It.IsAny<IFilm>())).Returns(true);
-            mock3.Setup(x => x.GetAllFilms()).Returns(new ReadOnlyCollection<IFilm>(new List<IFilm>()));
+            mock3.Setup(x => x.AddContent(It.IsAny<IMediaContent>())).Returns(true);
+            mock3.Setup(x => x.GetAllContents()).Returns(new ReadOnlyCollection<IMediaContent>(new List<IMediaContent>()));
 
             List<IStreamingService> mockedServices = new List<IStreamingService>([mock1.Object, mock2.Object, mock3.Object]);
 
             _streamingRegister = new StreamingRegister(mockedServices);
 
             // Act
-            bool wasFilmAdded = _streamingRegister.AddFilm(newFilm, "AmazingPrimed");
-            IFilm? addedFilm = _streamingRegister.GetFilmAndService("Hulk", 2003)?.Film;
+            bool wasContentAdded = _streamingRegister.AddContent(newContent, "AmazingPrimed");
 
             // Assert
-            Assert.That(wasFilmAdded, Is.True);
-            mock3.Verify(x => x.AddFilm(It.IsAny<IFilm>()));
+            Assert.That(wasContentAdded, Is.True);
+            mock3.Verify(x => x.AddContent(It.IsAny<IMediaContent>()));
         }
         [Test]
         public void RemoveStreamingService_should_return_false_when_not_found()
         {
             // Arrange
-            IFilm newFilm = new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138);
+            IMediaContent newContent = new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138);
 
             var mock1 = new Mock<IStreamingService>();
             mock1.Setup(x => x.Name).Returns("Notflix");
@@ -384,7 +383,7 @@ namespace StreamingCatalogue.UnitTests
         public void RemoveStreamingService_should_remove_streaming_service_when_found()
         {
             // Arrange
-            IFilm newFilm = new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138);
+            IMediaContent newContent = new Film("Hulk", new DateOnly(2003, 7, 3), "Action", 138);
 
             var mock1 = new Mock<IStreamingService>();
             mock1.Setup(x => x.Name).Returns("Notflix");

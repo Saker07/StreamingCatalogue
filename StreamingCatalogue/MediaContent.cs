@@ -6,10 +6,12 @@ namespace StreamingCatalogue
         DateOnly ReleaseDate { set; get; }
         string Genre { set; get; }
         int Rating { set; get; }
-        string GetUniqueId()
+        char ContentType { get; }
+        string GetUniqueId();
     }
     public abstract class MediaContent : IMediaContent
     {
+        public char ContentType { get; }
         public string Name { set; get; }
         public DateOnly ReleaseDate { set; get; }
         public string Genre { set; get; }
@@ -32,6 +34,7 @@ namespace StreamingCatalogue
                 }
             }
         }
+
         public abstract string GetUniqueId();
     }
 }

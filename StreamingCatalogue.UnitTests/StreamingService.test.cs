@@ -4,119 +4,119 @@ using NUnit.Framework.Internal;
 namespace StreamingCatalogue.UnitTests
 {
     [TestFixture]
-    public class StreamingServiceWithFilmsTest
+    public class StreamingServiceWithContentsTest
     {
         private IStreamingService _streamingService { get; set; }
-        private List<IFilm> _startingFilmlist { get; set; }
+        private List<IMediaContent> _startingContentList { get; set; }
         [SetUp]
         public void Setup()
         {
-            _startingFilmlist = [new Film("Inception", new DateOnly(2010, 1, 1), "Action", 148), new Film("Constantine", new DateOnly(2005, 3, 18), "Supernatural", 121)];
-            _streamingService = new StreamingService("Notflix", 1099, new List<IFilm>(_startingFilmlist));
+            _startingContentList = [new Film("Inception", new DateOnly(2010, 1, 1), "Action", 148), new Film("Constantine", new DateOnly(2005, 3, 18), "Supernatural", 121)];
+            _streamingService = new StreamingService("Notflix", 1099, new List<IMediaContent>(_startingContentList));
         }
-        [TestCase("Inception", 2010, 5)]
-        public void SetRating_should_set_film_rating_when_int_in_range(string title, int yearOfRelease, int rating)
+        [TestCase("Inception", 2010, 'F', 5)]
+        public void SetRating_should_set_content_rating_when_int_in_range(string title, int yearOfRelease, char contentType, int rating)
         {
-            bool returnValue = _streamingService.SetRating(title, yearOfRelease, rating);
+            bool returnValue = _streamingService.SetRating(title, yearOfRelease, contentType, rating);
             Assert.That(returnValue, Is.True);
-            Assert.That(_streamingService.GetFilm(title, yearOfRelease).Rating, Is.EqualTo(rating));
+            Assert.That(_streamingService.GetContent(title, yearOfRelease, contentType).Rating, Is.EqualTo(rating));
         }
-        [TestCase("Superman", 2020, 4)]
-        public void SetRating_should_return_false_when_film_not_found(string title, int yearOfRelease, int rating)
+        [TestCase("Superman", 2020, 'F', 4)]
+        public void SetRating_should_return_false_when_content_not_found(string title, int yearOfRelease, char contentType, int rating)
         {
-            bool returnValue = _streamingService.SetRating(title, yearOfRelease, rating);
+            bool returnValue = _streamingService.SetRating(title, yearOfRelease, contentType, rating);
             Assert.That(returnValue, Is.False);
         }
         [Test]
-        public void GetAllFilms_should_return_all_films_when_films_are_present()
+        public void GetAllContents_should_return_all_contents_when_contents_are_present()
         {
-            ReadOnlyCollection<IFilm>? returnValue = _streamingService.GetAllFilms();
+            ReadOnlyCollection<IMediaContent>? returnValue = _streamingService.GetAllContents();
             Assert.That(returnValue.Count, Is.EqualTo(2));
-            Assert.That(returnValue, Is.EqualTo(_startingFilmlist));
+            Assert.That(returnValue, Is.EqualTo(_startingContentList));
         }
         [Test]
-        public void GetFilm_should_return_film_when_found()
+        public void GetContent_should_return_content_when_found()
         {
-            IFilm filmToGet = _startingFilmlist[0];
-            IFilm returnedFilm = _streamingService.GetFilm(filmToGet.Name, filmToGet.ReleaseDate.Year);
-            Assert.That(returnedFilm, Is.EqualTo<IFilm>(filmToGet));
+            IMediaContent contentToGet = _startingContentList[0];
+            IMediaContent returnedContent = _streamingService.GetContent(contentToGet.Name, contentToGet.ReleaseDate.Year, contentToGet.ContentType);
+            Assert.That(returnedContent, Is.EqualTo<IMediaContent>(contentToGet));
         }
         [Test]
-        public void GetFilm_should_return_null_when_not_found()
+        public void GetContent_should_return_null_when_not_found()
         {
-            IFilm returnedFilm = _streamingService.GetFilm("Thor", 2020);
-            Assert.That(returnedFilm, Is.Null);
+            IMediaContent returnedContent = _streamingService.GetContent("Thor", 2020, 'F');
+            Assert.That(returnedContent, Is.Null);
         }
         [Test]
-        public void AddFilm_should_add_film_when_film_not_found()
+        public void AddContent_should_add_content_when_content_not_found()
         {
-            IFilm filmToAdd = new Film("A Silent Voice", new DateOnly(2017, 3, 15), "Drama", 130, 5);
-            bool wasFilmAdded = _streamingService.AddFilm(filmToAdd);
-            Assert.That(wasFilmAdded, Is.True);
-            Assert.That(_streamingService.GetFilm(filmToAdd.Name, filmToAdd.ReleaseDate.Year), Is.EqualTo<IFilm>(filmToAdd));
+            IMediaContent contentToAdd = new Film("A Silent Voice", new DateOnly(2017, 3, 15), "Drama", 130, 5);
+            bool wasContentAdded = _streamingService.AddContent(contentToAdd);
+            Assert.That(wasContentAdded, Is.True);
+            Assert.That(_streamingService.GetContent(contentToAdd.Name, contentToAdd.ReleaseDate.Year, contentToAdd.ContentType), Is.EqualTo<IMediaContent>(contentToAdd));
         }
         [Test]
-        public void AddFilm_should_return_false_when_film_already_found()
+        public void AddContent_should_return_false_when_content_already_found()
         {
-            IFilm filmToAdd = new Film("Inception", new DateOnly(2010, 1, 1), "Action", 148);
-            bool wasFilmAdded = _streamingService.AddFilm(filmToAdd);
-            Assert.That(wasFilmAdded, Is.False);
+            IMediaContent contentToAdd = new Film("Inception", new DateOnly(2010, 1, 1), "Action", 148);
+            bool wasContentAdded = _streamingService.AddContent(contentToAdd);
+            Assert.That(wasContentAdded, Is.False);
         }
         [Test]
-        public void RemoveFilm_should_remove_film_when_film_found()
+        public void RemoveContent_should_remove_content_when_content_found()
         {
-            IFilm filmToRemove = new Film("Inception", new DateOnly(2010, 1, 1), "Action", 148);
-            bool wasFilmRemoved = _streamingService.RemoveFilm(filmToRemove.Name, filmToRemove.ReleaseDate.Year);
-            Assert.That(wasFilmRemoved, Is.True);
-            Assert.That(_streamingService.GetFilm(filmToRemove.Name, filmToRemove.ReleaseDate.Year), Is.Null);
+            IMediaContent contentToRemove = new Film("Inception", new DateOnly(2010, 1, 1), "Action", 148);
+            bool wasContentRemoved = _streamingService.RemoveContent(contentToRemove.Name, contentToRemove.ReleaseDate.Year, contentToRemove.ContentType);
+            Assert.That(wasContentRemoved, Is.True);
+            Assert.That(_streamingService.GetContent(contentToRemove.Name, contentToRemove.ReleaseDate.Year, contentToRemove.ContentType), Is.Null);
         }
         [Test]
-        public void RemoveFilm_should_return_false_when_film_not_found()
+        public void RemoveContent_should_return_false_when_content_not_found()
         {
-            IFilm filmToRemove = new Film("Ghost Rider", new DateOnly(2007, 3, 2), "Action", 116);
-            bool wasFilmRemoved = _streamingService.RemoveFilm(filmToRemove.Name, filmToRemove.ReleaseDate.Year);
-            Assert.That(wasFilmRemoved, Is.False);
+            IMediaContent contentToRemove = new Film("Ghost Rider", new DateOnly(2007, 3, 2), "Action", 116);
+            bool wasContentRemoved = _streamingService.RemoveContent(contentToRemove.Name, contentToRemove.ReleaseDate.Year, contentToRemove.ContentType);
+            Assert.That(wasContentRemoved, Is.False);
         }
     }
     [TestFixture]
     public class StreamingServiceEmptyTest
     {
         private IStreamingService _streamingService { get; set; }
-        private IFilm _film = new Film("Patema Inverted", new DateOnly(2013, 11, 9), "Fantasy", 99, 3);
+        private IMediaContent _content = new Film("Patema Inverted", new DateOnly(2013, 11, 9), "Fantasy", 99, 3);
         [SetUp]
         public void Setup()
         {
-            _streamingService = new StreamingService("Notflix", 1099, new List<IFilm>());
+            _streamingService = new StreamingService("Notflix", 1099, new List<IMediaContent>());
         }
         [Test]
-        public void SetRating_should_return_false_when_film_list_empty()
+        public void SetRating_should_return_false_when_content_list_empty()
         {
-            bool returnValue = _streamingService.SetRating(_film.Name, _film.ReleaseDate.Year, 2);
+            bool returnValue = _streamingService.SetRating(_content.Name, _content.ReleaseDate.Year, _content.ContentType, 2);
             Assert.That(returnValue, Is.False);
         }
         [Test]
-        public void AddFilm_should_add_book_when_film_list_empty()
+        public void AddContent_should_add_book_when_content_list_empty()
         {
-            bool returnValue = _streamingService.AddFilm(_film);
+            bool returnValue = _streamingService.AddContent(_content);
             Assert.That(returnValue, Is.True);
-            Assert.That(_streamingService.GetFilm(_film.Name, _film.ReleaseDate.Year), Is.EqualTo<IFilm>(_film));
+            Assert.That(_streamingService.GetContent(_content.Name, _content.ReleaseDate.Year, _content.ContentType), Is.EqualTo<IMediaContent>(_content));
         }
         [Test]
-        public void RemoveBook_should_return_false_when_film_list_empty()
+        public void RemoveBook_should_return_false_when_content_list_empty()
         {
-            bool returnValue = _streamingService.RemoveFilm(_film.Name, _film.ReleaseDate.Year);
+            bool returnValue = _streamingService.RemoveContent(_content.Name, _content.ReleaseDate.Year, _content.ContentType);
             Assert.That(returnValue, Is.False);
         }
         [Test]
-        public void GetFilm_should_return_null_when_film_list_empty()
+        public void GetContent_should_return_null_when_content_list_empty()
         {
-            IFilm returnedFilm = _streamingService.GetFilm(_film.Name, _film.ReleaseDate.Year);
-            Assert.That(returnedFilm, Is.Null);
+            IMediaContent returnedContent = _streamingService.GetContent(_content.Name, _content.ReleaseDate.Year, _content.ContentType);
+            Assert.That(returnedContent, Is.Null);
         }
         [Test]
-        public void GetAllFilms_shouldReturn_empty_list_when_film_list_empty()
+        public void GetAllContents_shouldReturn_empty_list_when_content_list_empty()
         {
-            ReadOnlyCollection<IFilm> returnedList = _streamingService.GetAllFilms();
+            ReadOnlyCollection<IMediaContent> returnedList = _streamingService.GetAllContents();
             Assert.That(returnedList.Count(), Is.EqualTo(0));
         }
     }

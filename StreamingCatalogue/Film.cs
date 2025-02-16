@@ -1,13 +1,16 @@
 namespace StreamingCatalogue
 {
-    public interface IFilm
+    public interface IFilm : IMediaContent
     {
         string Name { set; get; }
         DateOnly ReleaseDate { set; get; }
         string Genre { set; get; }
         int Rating { set; get; }
         int Runtime { set; get; }
+        char ContentType { get; }
+        string GetUniqueId();
     }
+
     public class Film : MediaContent, IFilm
     {
 
@@ -34,10 +37,6 @@ namespace StreamingCatalogue
             }
         }
         public int Runtime { set; get; }
-        public override string GetUniqueId()
-        {
-            return $"{Name}-S{ReleaseDate.Year}";
-        }
         public Film(string name, DateOnly releaseDate, string genre = "", int runtime = 0, int rating = 0)
         {
             Name = name;
@@ -45,6 +44,17 @@ namespace StreamingCatalogue
             Genre = genre;
             Runtime = runtime;
             Rating = rating;
+        }
+        public char ContentType { get { return 'F'; } }
+        public override string ToString()
+        {
+            return $"{Name} - {ReleaseDate.ToString()} - Rating: {Rating}/5 - Genre: {Genre}";
+        }
+        public override string GetUniqueId()
+        {
+
+            return $"{ContentType}-{Name}-{ReleaseDate.Year}";
+
         }
     }
 }

@@ -7,14 +7,14 @@ StreamingRegister test = new StreamingRegister();
 Film film = new Film("film1", new DateOnly(), "horror", 60);
 
 test.AddStreamingService(new StreamingService("Notflix", 12.99M));
-test.AddFilm(film, "Notflix");
+test.AddContent(film, "Notflix");
 
-ReadOnlyCollection<(string StreamingServiceName, IFilm Film)>? noftlixFilms = test.GetAllFilmsInStreamingService("Notflix");
+ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)>? noftlixFilms = test.GetAllContentsInStreamingService("Notflix");
 
 if (noftlixFilms != null)
 {
     foreach (var x in noftlixFilms)
     {
-        Console.WriteLine($"{x.Film.Name}, {x.Film.Genre}, {x.Film.ReleaseDate}, {x.Film.Rating}");
+        Console.WriteLine($"{x.StreamingServiceName} * {x.Content}");
     }
 }

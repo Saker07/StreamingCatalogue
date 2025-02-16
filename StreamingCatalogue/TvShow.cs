@@ -2,6 +2,7 @@ namespace StreamingCatalogue
 {
     public class TvShow : MediaContent
     {
+        char ContentType { get { return 'S'; } }
         public string Name { set; get; }
         public DateOnly ReleaseDate { set; get; }
         public string Genre { set; get; }
@@ -26,10 +27,6 @@ namespace StreamingCatalogue
         }
         int SeasonNumber { set; get; }
         int NumberOfEpisodes { set; get; }
-        public override string GetUniqueId()
-        {
-            return $"{Name}-S{SeasonNumber}";
-        }
         public TvShow(string name, DateOnly releaseDate, int seasonNumber, string genre = "", int numberOfEpisodes = 0, int rating = 0)
         {
             Name = name;
@@ -38,6 +35,17 @@ namespace StreamingCatalogue
             NumberOfEpisodes = numberOfEpisodes;
             _rating = rating;
             SeasonNumber = seasonNumber;
+        }
+
+        public override string ToString()
+        {
+            return $"{Name} - Season {SeasonNumber} - {ReleaseDate.ToString()} - Episode count:{NumberOfEpisodes} - Rating: {Rating}/5 - Genre: {Genre}";
+        }
+        public override string GetUniqueId()
+        {
+
+            return $"{ContentType}-{Name}-{SeasonNumber}";
+
         }
     }
 }
