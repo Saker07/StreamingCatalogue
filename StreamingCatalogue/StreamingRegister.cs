@@ -31,7 +31,6 @@ namespace StreamingCatalogue
             foreach (var service in StreamingServices)
             {
                 List<IMediaContent> contentList = new List<IMediaContent>(service.GetAllContents());
-                contentList.Sort();
                 foreach (var content in contentList)
                 {
                     returnList.Add((service.Name, content));

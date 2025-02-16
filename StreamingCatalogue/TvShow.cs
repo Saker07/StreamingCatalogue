@@ -1,8 +1,24 @@
 namespace StreamingCatalogue
 {
-    public class TvShow : MediaContent
+    public interface ITvShow : IMediaContent
     {
         char ContentType { get { return 'S'; } }
+        string Name { set; get; }
+        DateOnly ReleaseDate { set; get; }
+        string Genre { set; get; }
+
+        int Rating { set; get; }
+        int SeasonNumber { set; get; }
+        int NumberOfEpisodes { set; get; }
+
+        string ToString();
+
+        string GetUniqueId();
+
+    }
+    public class TvShow : MediaContent, ITvShow
+    {
+        public char ContentType { get { return 'S'; } }
         public string Name { set; get; }
         public DateOnly ReleaseDate { set; get; }
         public string Genre { set; get; }
@@ -25,8 +41,8 @@ namespace StreamingCatalogue
                 }
             }
         }
-        int SeasonNumber { set; get; }
-        int NumberOfEpisodes { set; get; }
+        public int SeasonNumber { set; get; }
+        public int NumberOfEpisodes { set; get; }
         public TvShow(string name, DateOnly releaseDate, int seasonNumber, string genre = "", int numberOfEpisodes = 0, int rating = 0)
         {
             Name = name;
