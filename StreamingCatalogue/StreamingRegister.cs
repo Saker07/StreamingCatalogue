@@ -90,7 +90,7 @@ namespace StreamingCatalogue
         public bool AddContent(IMediaContent content, string streamingServiceName)
         {
             ReadOnlyCollection<(string StreamingServiceName, IMediaContent Content)>? streamingRegister = GetEntireRegister();
-            (string StreamingServiceName, IMediaContent Content)? serviceContent = streamingRegister?.Where(serviceContent => serviceContent.Content.Name == content.Name && serviceContent.Content.ReleaseDate.Year == content.ReleaseDate.Year).FirstOrDefault();
+            (string StreamingServiceName, IMediaContent Content)? serviceContent = streamingRegister?.Where(serviceContent => serviceContent.Content.GetUniqueId() == content.GetUniqueId()).FirstOrDefault();
             if (serviceContent == (null, null))
             {
                 bool? isContentAdded = StreamingServices.Where(service => service.Name == streamingServiceName).FirstOrDefault()?.AddContent(content);
